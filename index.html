@@ -31,15 +31,48 @@
             <div id="tab3" class="tab">
                 <p class="yellow-black">Yellow text on black background</p>
                 <p class="purple-yellow">Purple text on yellow background</p>
-                <canvas id="pieChart" width="300" height="200"></canvas>
+                <!-- <canvas id="pieChart" width="300" height="200"></canvas> -->
+                 <canvas id="myChart"></canvas>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/chartjs-plugin-datalabels"></script>
+<script>
+  Chart.register(ChartDataLabels);
+
+  const ctx = document.getElementById('myChart');
+
+  new Chart(ctx, {
+    type: 'pie',
+    data: {
+      labels: ['Jan', 'Feb', 'Mar'],
+      datasets: [{
+        label: 'Sales',
+        data: [10, 20, 30],
+        backgroundColor: ['red', 'blue', 'green']
+      }]
+    },
+    options: {
+      plugins: {
+        datalabels: {
+          color: 'white',
+          anchor: 'center',
+          align: 'center',
+          font: {
+            weight: 'bold',
+            size: 16
+          }
+        }
+      }
+    }
+  });
+</script>
             </div>
 
             <!-- Tab 4: Profile -->
             <div id="tab4" class="tab">
-                <img src="Tab3.png" alt="Profile Image" class="profile-img" onclick="showNotification()">
+                <img src="profile.png" alt="Profile Image" class="profile-img" onclick="showNotification()">
                 <p class="profile-name"><b>Anna Smith</b></p>
                 <div id="notification" class="notification">
-                    You tapped the image!
+                    Warning, do not click the profile picture
                     <button onclick="closeNotification()">Close</button>
                 </div>
             </div>
