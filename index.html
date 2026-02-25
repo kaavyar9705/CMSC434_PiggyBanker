@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CMSC434 App Prototype</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div class="device">
+
+        <!-- Tab Contents -->
+        <div class="tab-content">
+
+            <!-- Tab 1: Text -->
+            <div id="tab1" class="tab active">
+                <p>Here is some long scrollable text. Lorem ipsum dolor sit amet, consectetur adipiscing elit.
+                    Suspendisse at lorem eu nunc feugiat commodo...</p>
+                <p>More text...</p>
+                <p>Even more text to make scrolling necessary...</p>
+            </div>
+
+            <!-- Tab 2: LR -->
+            <div id="tab2" class="tab">
+                <p class="bottom-right">Down Here</p>
+            </div>
+
+            <!-- Tab 3: Colors -->
+            <div id="tab3" class="tab">
+                <p class="yellow-black">Yellow text on black background</p>
+                <p class="purple-yellow">Purple text on yellow background</p>
+                <canvas id="pieChart" width="300" height="200"></canvas>
+            </div>
+
+            <!-- Tab 4: Profile -->
+            <div id="tab4" class="tab">
+                <img src="Tab3.png" alt="Profile Image" class="profile-img" onclick="showNotification()">
+                <p class="profile-name"><b>Anna Smith</b></p>
+                <div id="notification" class="notification">
+                    You tapped the image!
+                    <button onclick="closeNotification()">Close</button>
+                </div>
+            </div>
+
+            <!-- Tab 5: Choices -->
+            <div id="tab5" class="tab">
+                <label>Pick an option:</label><br>
+                <input type="radio" name="choice" value="Option 1"> Option 1<br>
+                <input type="radio" name="choice" value="Option 2"> Option 2<br><br>
+
+                <label>Pick from dropdown:</label><br>
+                <select id="dropdown">
+                    <option value="A">A</option>
+                    <option value="B">B</option>
+                </select><br><br>
+
+                <button onclick="showChoice()">Submit</button>
+                <p id="choiceDisplay"></p>
+            </div>
+
+            <!-- Tab 6: ToDo -->
+            <div id="tab6" class="tab">
+                <input type="text" id="newItem" placeholder="Add new item">
+                <button onclick="addItem()">Add</button>
+                <ul id="todoList"></ul>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation -->
+        <!-- Bottom Navigation with Icon Fonts -->
+        <div class="bottom-nav">
+            <button data-tab="tab1" onclick="openTab('tab1')">
+                <i class="fas fa-align-left"></i>
+                <span>Text</span>
+            </button>
+            <button data-tab="tab2" onclick="openTab('tab2')">
+                <i class="fas fa-arrow-down"></i>
+                <span>LR</span>
+            </button>
+            <button data-tab="tab3" onclick="openTab('tab3')">
+                <i class="fas fa-palette"></i>
+                <span>Colors</span>
+            </button>
+            <button data-tab="tab4" onclick="openTab('tab4')">
+                <i class="fas fa-user"></i>
+                <span>Profile</span>
+            </button>
+            <button data-tab="tab5" onclick="openTab('tab5')">
+                <i class="fas fa-check-square"></i>
+                <span>Choices</span>
+            </button>
+            <button data-tab="tab6" onclick="openTab('tab6')">
+                <i class="fas fa-list"></i>
+                <span>ToDo</span>
+            </button>
+        </div>
+        
+        
+
+
+    </div>
+
+    <script src="script.js"></script>
+</body>
+
+</html>
