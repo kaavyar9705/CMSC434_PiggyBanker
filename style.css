@@ -1,5 +1,6 @@
 /* Center the device on the screen */
-body, html {
+body,
+html {
     margin: 0;
     padding: 0;
     display: flex;
@@ -56,22 +57,26 @@ body, html {
 .bottom-nav button:hover {
     background-color: #ddd;
 }
+
 /* Active tab color */
 .bottom-nav button.active i,
 .bottom-nav button.active span {
-    color: #007bff; /* blue */
+    color: #007bff;
+    /* blue */
 }
 
 .bottom-nav button i,
 .bottom-nav button span {
-    color: #333; /* default inactive color */
+    color: #333;
+    /* default inactive color */
 }
 
 
 /* Tab 2 */
 .bottom-right {
     position: absolute;
-    bottom: 70px; /* above nav bar */
+    bottom: 70px;
+    /* above nav bar */
     right: 15px;
 }
 
@@ -113,6 +118,7 @@ body, html {
 #todoList li {
     cursor: pointer;
 }
+
 .crossed {
     text-decoration: line-through;
 }
