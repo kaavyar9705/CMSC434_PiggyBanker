@@ -1,9 +1,3 @@
-/*!
- * chartjs-plugin-datalabels v2.2.0
- * https://chartjs-plugin-datalabels.netlify.app
- * (c) 2017-2022 chartjs-plugin-datalabels contributors
- * Released under the MIT license
- */
 (function (global, factory) {
 typeof exports === 'object' && typeof module !== 'undefined' ? module.exports = factory(require('chart.js/helpers'), require('chart.js')) :
 typeof define === 'function' && define.amd ? define(['chart.js/helpers', 'chart.js'], factory) :
@@ -16,9 +10,6 @@ var devicePixelRatio = (function() {
       return window.devicePixelRatio;
     }
 
-    // devicePixelRatio is undefined on IE10
-    // https://stackoverflow.com/a/20204180/8837887
-    // https://github.com/chartjs/chartjs-plugin-datalabels/issues/85
     var screen = window.screen;
     if (screen) {
       return (screen.deviceXDPI || 1) / (screen.logicalXDPI || 1);
@@ -29,7 +20,6 @@ var devicePixelRatio = (function() {
 }());
 
 var utils = {
-  // @todo move this in Chart.helpers.toTextLines
   toTextLines: function(inputs) {
     var lines = [];
     var input;
@@ -49,8 +39,6 @@ var utils = {
     return lines;
   },
 
-  // @todo move this in Chart.helpers.canvas.textSize
-  // @todo cache calls of measureText if font doesn't change?!
   textSize: function(ctx, lines, font) {
     var items = [].concat(lines);
     var ilen = items.length;
@@ -72,20 +60,10 @@ var utils = {
     };
   },
 
-  /**
-   * Returns value bounded by min and max. This is equivalent to max(min, min(value, max)).
-   * @todo move this method in Chart.helpers.bound
-   * https://doc.qt.io/qt-5/qtglobal.html#qBound
-   */
   bound: function(min, value, max) {
     return Math.max(min, Math.min(value, max));
   },
 
-  /**
-   * Returns an array of pair [value, state] where state is:
-   * * -1: value is only in a0 (removed)
-   * *  1: value is only in a1 (added)
-   */
   arrayDiff: function(a0, a1) {
     var prev = a0.slice();
     var updates = [];
@@ -109,9 +87,6 @@ var utils = {
     return updates;
   },
 
-  /**
-   * https://github.com/chartjs/chartjs-plugin-datalabels/issues/70
-   */
   rasterize: function(v) {
     return Math.round(v * devicePixelRatio) / devicePixelRatio;
   }
@@ -167,7 +142,7 @@ function aligned(x, y, vx, vy, align) {
     // keep natural orientation
     break;
   default:
-    // clockwise rotation (in degree)
+    // clockwise rotation
     align *= (Math.PI / 180);
     vx = Math.cos(align);
     vy = Math.sin(align);
@@ -181,9 +156,6 @@ function aligned(x, y, vx, vy, align) {
     vy: vy
   };
 }
-
-// Line clipping (Cohen–Sutherland algorithm)
-// https://en.wikipedia.org/wiki/Cohen–Sutherland_algorithm
 
 var R_INSIDE = 0;
 var R_LEFT = 1;
@@ -217,10 +189,8 @@ function clipped(segment, area) {
   var r1 = region(x1, y1, area);
   var r, x, y;
 
-  // eslint-disable-next-line no-constant-condition
   while (true) {
     if (!(r0 | r1) || (r0 & r1)) {
-      // both points inside or on the same side: no clipping
       break;
     }
 
@@ -511,8 +481,6 @@ function drawTextLine(ctx, text, cfg) {
 
   if (cfg.filled) {
     if (shadow && stroked) {
-      // Prevent drawing shadow on both the text stroke and fill, so
-      // if the text is stroked, remove the shadow for the text fill.
       ctx.shadowBlur = 0;
     }
 
@@ -539,7 +507,6 @@ function drawText(ctx, lines, rect, model) {
     return;
   }
 
-  // Adjust coordinates based on text alignment and line height
   rect = textGeometry(rect, align, font);
 
   ctx.font = font.string;
@@ -580,9 +547,6 @@ var Label = function(config, ctx, el, index) {
 };
 
 helpers.merge(Label.prototype, {
-  /**
-   * @private
-   */
   _modelize: function(display, lines, config, context) {
     var me = this;
     var index = me._index;
@@ -626,8 +590,6 @@ helpers.merge(Label.prototype, {
     var config = me._config;
     var value, label, lines;
 
-    // We first resolve the display option (separately) to avoid computing
-    // other options in case the label is hidden (i.e. display: false).
     var display = helpers.resolve([config.display, true], context, index);
 
     if (display) {
@@ -697,7 +659,7 @@ helpers.merge(Label.prototype, {
 });
 
 var MIN_INTEGER = Number.MIN_SAFE_INTEGER || -9007199254740991; // eslint-disable-line es/no-number-minsafeinteger
-var MAX_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;  // eslint-disable-line es/no-number-maxsafeinteger
+var MAX_INTEGER = Number.MAX_SAFE_INTEGER || 9007199254740991;  
 
 function rotated(point, center, angle) {
   var cos = Math.cos(angle);
@@ -787,8 +749,6 @@ helpers.merge(HitBox.prototype, {
       || point.y > rect.y + rect.h + margin * 2);
   },
 
-  // Separating Axis Theorem
-  // https://gamedevelopment.tutsplus.com/tutorials/collision-detection-using-the-separating-axis-theorem--gamedev-169
   intersects: function(other) {
     var r0 = this._points();
     var r1 = other._points();
@@ -799,8 +759,6 @@ helpers.merge(HitBox.prototype, {
     var i, pr0, pr1;
 
     if (this._rotation !== other._rotation) {
-      // Only separate with r1 axis if the rotation is different,
-      // else it's enough to separate r0 and r1 with r0 axis only!
       axes.push(
         toAxis(r1[0], r1[1]),
         toAxis(r1[0], r1[3])
@@ -843,26 +801,20 @@ function coordinates(el, model, geometry) {
   var vy = point.vy;
 
   if (!vx && !vy) {
-    // if aligned center, we don't want to offset the center point
     return {x: point.x, y: point.y};
   }
 
   var w = geometry.w;
   var h = geometry.h;
 
-  // take in account the label rotation
   var rotation = model.rotation;
   var dx = Math.abs(w / 2 * Math.cos(rotation)) + Math.abs(h / 2 * Math.sin(rotation));
   var dy = Math.abs(w / 2 * Math.sin(rotation)) + Math.abs(h / 2 * Math.cos(rotation));
 
-  // scale the unit vector (vx, vy) to get at least dx or dy equal to
-  // w or h respectively (else we would calculate the distance to the
-  // ellipse inscribed in the bounding rect)
   var vs = 1 / Math.max(Math.abs(vx), Math.abs(vy));
   dx *= vx * vs;
   dy *= vy * vs;
 
-  // finally, include the explicit offset
   dx += model.offset * vx;
   dy += model.offset * vy;
 
@@ -874,10 +826,6 @@ function coordinates(el, model, geometry) {
 
 function collide(labels, collider) {
   var i, j, s0, s1;
-
-  // IMPORTANT Iterate in the reverse order since items at the end of the
-  // list have an higher weight/priority and thus should be less impacted
-  // by the overlapping strategy.
 
   for (i = labels.length - 1; i >= 0; --i) {
     s0 = labels[i].$layout;
@@ -897,17 +845,11 @@ function collide(labels, collider) {
 function compute(labels) {
   var i, ilen, label, state, geometry, center, proxy;
 
-  // Initialize labels for overlap detection
   for (i = 0, ilen = labels.length; i < ilen; ++i) {
     label = labels[i];
     state = label.$layout;
 
     if (state._visible) {
-      // Chart.js 3 removed el._model in favor of getProps(), making harder to
-      // abstract reading values in positioners. Also, using string arrays to
-      // read values (i.e. var {a,b,c} = el.getProps(["a","b","c"])) would make
-      // positioners inefficient in the normal case (i.e. not the final values)
-      // and the code a bit ugly, so let's use a Proxy instead.
       proxy = new Proxy(label._el, {get: (el, p) => el.getProps([p], true)[p]});
 
       geometry = label.geometry();
@@ -916,7 +858,6 @@ function compute(labels) {
     }
   }
 
-  // Auto hide overlapping labels
   return collide(labels, function(s0, s1) {
     var h0 = s0._hidable;
     var h1 = s1._hidable;
@@ -948,9 +889,6 @@ var layout = {
       }
     }
 
-    // TODO New `z` option: labels with a higher z-index are drawn
-    // of top of the ones with a lower index. Lowest z-index labels
-    // are also discarded first when hiding overlapping labels.
     labels.sort(function(a, b) {
       var sa = a.$layout;
       var sb = b.$layout;
@@ -985,9 +923,6 @@ var layout = {
 
   lookup: function(labels, point) {
     var i, state;
-
-    // IMPORTANT Iterate in the reverse order since items at the end of
-    // the list have an higher z-index, thus should be picked first.
 
     for (i = labels.length - 1; i >= 0; --i) {
       state = labels[i].$layout;
@@ -1041,11 +976,6 @@ var formatter = function(value) {
   return '' + label;
 };
 
-/**
- * IMPORTANT: make sure to also update tests and TypeScript definition
- * files (`/test/specs/defaults.spec.js` and `/types/options.d.ts`)
- */
-
 var defaults = {
   align: 'center',
   anchor: 'center',
@@ -1083,9 +1013,6 @@ var defaults = {
   textShadowColor: undefined
 };
 
-/**
- * @see https://github.com/chartjs/Chart.js/issues/4176
- */
 
 var EXPANDO_KEY = '$datalabels';
 var DEFAULT_KEY = '$default';
@@ -1119,11 +1046,9 @@ function configure(dataset, options) {
       }
     });
   } else {
-    // Default label if no "named" label defined.
     configs.push(options);
   }
 
-  // listeners: {<event-type>: {<label-key>: <fn>}}
   listeners = configs.reduce(function(target, config) {
     helpers.each(config.listeners || {}, function(fn, event) {
       target[event] = target[event] || {};
@@ -1159,10 +1084,6 @@ function dispatchEvent(chart, listeners, label, event) {
   }
 
   if (helpers.callback(callback, [context, event]) === true) {
-    // Users are allowed to tweak the given context by injecting values that can be
-    // used in scriptable options to display labels differently based on the current
-    // event (e.g. highlight an hovered label). That's why we update the label with
-    // the output context and schedule a new chart render by setting it dirty.
     chart[EXPANDO_KEY]._dirty = true;
     label.update(context);
   }
@@ -1234,9 +1155,9 @@ var plugin = {
   beforeUpdate: function(chart) {
     var expando = chart[EXPANDO_KEY];
     expando._listened = false;
-    expando._listeners = {};     // {<event-type>: {<dataset-index>: {<label-key>: <fn>}}}
-    expando._datasets = [];      // per dataset labels: [Label[]]
-    expando._labels = [];        // layouted labels: Label[]
+    expando._listeners = {};     
+    expando._datasets = [];
+    expando._labels = [];        
   },
 
   afterDatasetUpdate: function(chart, args, options) {
@@ -1283,8 +1204,6 @@ var plugin = {
 
     ctx.restore();
 
-    // Store listeners at the chart level and per event type to optimize
-    // cases where no listeners are registered for a specific event.
     helpers.merge(expando._listeners, config.listeners, {
       merger: function(event, target, source) {
         target[event] = target[event] || {};
@@ -1298,17 +1217,11 @@ var plugin = {
     chart[EXPANDO_KEY]._labels = layout.prepare(chart[EXPANDO_KEY]._datasets);
   },
 
-  // Draw labels on top of all dataset elements
-  // https://github.com/chartjs/chartjs-plugin-datalabels/issues/29
-  // https://github.com/chartjs/chartjs-plugin-datalabels/issues/32
   afterDatasetsDraw: function(chart) {
     layout.draw(chart, chart[EXPANDO_KEY]._labels);
   },
 
   beforeEvent: function(chart, args) {
-    // If there is no listener registered for this chart, `listened` will be false,
-    // meaning we can immediately ignore the incoming event and avoid useless extra
-    // computation for users who don't implement label interactions.
     if (chart[EXPANDO_KEY]._listened) {
       var event = args.event;
       switch (event.type) {

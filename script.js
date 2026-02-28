@@ -1,15 +1,14 @@
 function openTab(tabId) {
-    // Show the selected tab
     document.querySelectorAll('.tab').forEach(tab => tab.classList.remove('active'));
     document.getElementById(tabId).classList.add('active');
 
-    // Highlight the active button
+    // Highlight active button
     document.querySelectorAll('.bottom-nav button').forEach(btn => {
         btn.classList.toggle('active', btn.dataset.tab === tabId);
     });
 }
 
-// Tab 4 notification
+// Tab 4
 function showNotification() {
     document.getElementById('notification').style.display = 'block';
 }
@@ -18,7 +17,7 @@ function closeNotification() {
     document.getElementById('notification').style.display = 'none';
 }
 
-// Tab 5 Choices
+// Tab 5
 function showChoice() {
     const radio = document.querySelector('input[name="choice"]:checked');
     const dropdown = document.getElementById('dropdown').value;
@@ -28,7 +27,7 @@ function showChoice() {
     document.getElementById('choiceDisplay').innerText = text;
 }
 
-// Tab 6 ToDo List
+// Tab 6
 function addItem() {
     const input = document.getElementById('newItem');
     if (input.value === '') return;
@@ -48,7 +47,7 @@ function addItem() {
     input.value = '';
 }
 
-// Tab 3 Pie Chart using Canvas
+// Tab 3
 const canvas = document.getElementById('pieChart');
 if (canvas) {
     const ctx = canvas.getContext('2d');
@@ -67,5 +66,5 @@ if (canvas) {
     });
 }
 
-// Initialize default tab on page load
+// Initialize tab
 openTab('tab1');
